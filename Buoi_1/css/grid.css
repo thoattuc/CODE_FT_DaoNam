@@ -1,0 +1,15 @@
+.container {
+    background-color: aquamarine;
+    max-width: 95%;
+    margin: auto;
+}
+
+.row {
+    background-color: antiquewhite;
+    max-width: 100%;
+    text-align: center;
+}
+
+.col-md>.card>.row1>img {
+    margin: 0 auto;
+}

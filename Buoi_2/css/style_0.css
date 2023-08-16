@@ -1,0 +1,8 @@
+.header_mobile {
+    display: block;
+    margin: auto;
+}
+
+.header_mobile>.row:first-child {
+    
+}
