@@ -19,7 +19,7 @@
     <script src="./js/script_1.js"></script>
   </head>
   <body>
-    <!-- Modal -->
+    <!-- Modal login-->
     <div
       class="modal fade"
       id="loginModal"
@@ -63,6 +63,44 @@
       </div>
     </div>
 
+    <!-- Modal edit -->
+    <div
+      class="modal fade"
+      id="editModal"
+      tabindex="-1"
+      aria-labelledby="editModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Edit Todo:</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input type="text" class="form-control" id="editTodo" />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" id="submitEditBtn">
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
       <div class="container-fluid">
@@ -86,9 +124,13 @@
             <li class="nav-item">
               <a class="nav-link" id="loginBtn" href="#">Login</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" id="logoutBtn" href="#">Logout</a>
+            </li>
           </ul>
           <form class="d-flex">
             <input
+              id="searchInp"
               class="form-control me-2"
               type="search"
               placeholder="Search"
@@ -110,25 +152,29 @@
           />
         </div>
         <div class="col-md-2 text-center">
-          <button class="btn btn-outline-secondary" id="createBtn">Create</button>
-          <button class="btn btn-outline-danger" id="deleteBtn">Delete</button>
+          <button class="btn btn-outline-secondary" id="createBtn">
+            Create
+          </button>
+          <button class="btn btn-outline-danger" id="deleteManyBtn">
+            Delete
+          </button>
         </div>
       </div>
 
       <div class="todoList mt-3">
-        <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Todo</th>
-                <th scope="col">Finish</th>
-                <th scope="col">Action</th>
-              </tr>
-            </thead>
-            <tbody id="result">
-              
-            </tbody>
-          </table>
+        <table class="table" id="tableTodo">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Todo</th>
+              <th scope="col">Finish</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="result">
+            <!--.............-->
+          </tbody>
+        </table>
       </div>
     </div>
   </body>

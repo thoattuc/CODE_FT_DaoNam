@@ -1,7 +1,9 @@
 //--- Script: jquery + alert + CRUD Todolist---//
 $(document).ready(function () {
+  showTodoList();
   login();
   createTodo();
+  searchTodo();
 });
 
 //--- Login ---//
@@ -30,7 +32,7 @@ function login() {
               // alert("Login success ^^");
               const Toast = Swal.mixin({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 showConfirmButton: false,
                 timer: 2000,
                 timerProgressBar: true,
@@ -50,7 +52,7 @@ function login() {
               // alert("Invalid email! :/");
               const Toast = Swal.mixin({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 showConfirmButton: false,
                 timer: 3000,
                 timerProgressBar: true,
@@ -69,6 +71,28 @@ function login() {
         });
       }
     });
+  });
+}
+
+//--- Logout --//
+function Logout() {
+  $("#logoutBtn").click(function (e) {
+    e.preventDefault();
+    if (
+      localStorage.getItem("token") &&
+      localStorage.getItem("token") !== null
+    ) {
+      localStorage.removeItem("token");
+      Swal.fire({
+        position: "top",
+        icon: "success",
+        title: "Logout Done!",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(() => {
+        window.location.reload();
+      });
+    }
   });
 }
 
@@ -93,7 +117,7 @@ function createTodo() {
         },
         dataType: "JSON",
         success: function (res) {
-            if (res.check === true) {
+          if (res.check === true) {
             Swal.fire("Create Success ^^", "", "success").then(() => {
               window.location.reload();
             });
@@ -112,6 +136,7 @@ function createTodo() {
 
 //--- Show Todo ---//
 function showTodoList() {
+  $("#tableTodo").hide();
   if (localStorage.getItem("token") && localStorage.getItem("token") !== "") {
     $.ajax({
       type: "GET",
@@ -121,32 +146,259 @@ function showTodoList() {
       },
       dataType: "JSON",
       success: function (res) {
-        console.log(res);
+        // console.log(res);
         const todoList = res.todo;
         if (todoList.length > 0) {
           var html = ``;
           var count = 1;
-          todoList.forEach((item) => {
+          todoList.forEach((item, key) => {
             html +=
               `<tr>
                 <th scope="row">` +
               count++ +
               `</th>
-                <td>${item.note}</td>
+                <td><p class=todo>${item.note}</p></td>
                 <td>
-                    <input class="form-check-input finish" type="checkbox" value="${item.status}" id="${item.id}">
+                    <input class="form-check-input finish" type="checkbox" value="` +
+              item.status +
+              `" data-id="` +
+              item.id +
+              `">
                 </td>
                 <td>
                     <div class="d-flex">
-                        <button type="button" class="btn-sm btn-danger p-0" id="">Del</button>
-                        <button type="button" class="btn-sm btn-warning ms-1 p-0" id="">Edit</button>
+                        <button type="button" class="btn-sm btn-danger p-0 deleteOneBtn" data-id="` +
+              item.id +
+              `">Del</button>
+                        <button type="button" class="btn-sm btn-warning ms-1 p-0 editTodoBtn" data-id="` +
+              item.id +
+              `" data-key="` +
+              key +
+              `">Edit</button>
                     </div>
                 </td>
               </tr>`;
           });
           $("#result").html(html);
+          $("#tableTodo").show();
         }
+        deleteTodo();
+        editTodo();
+        Logout();
       },
     });
   }
+}
+
+//--- finishTodo --//
+function finishTodo() {
+  $(".finish").change(function (e) {
+    e.preventDefault();
+    var id = $(this).attr("data-id");
+    Swal.fire({
+      icon: "question",
+      text: "Did you finish todo?",
+      showDenyButton: false,
+      showCancelButton: true,
+      confirmButtonText: "Save",
+      denyButtonText: ``,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        $.ajax({
+          type: "post",
+          url: "https://students.trungthanhweb.com/api/updatetodo",
+          data: {
+            apitoken: localStorage.getItem("token"),
+            id: id,
+          },
+          dataType: "JSON",
+          success: function (res) {
+            if (res.check == true) {
+              Swal.fire({
+                position: "top",
+                icon: "success",
+                title: "Task Completed ^^",
+                showConfirmButton: false,
+                timer: 1500,
+              }).then(() => {
+                window.location.reload();
+              });
+            } else if (res.msg.id) {
+              Swal.fire({
+                position: "top",
+                icon: "error",
+                title: res.msg.id,
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
+          },
+        });
+      } else if (result.isDenied) {
+        Swal.fire("Changes are not saved", "", "info");
+      }
+    });
+  });
+}
+
+//--- deleteTodo ---//
+function deleteTodo() {
+  $(".deleteOneBtn").click(function (e) {
+    e.preventDefault();
+    var id = $(this).attr("data-id");
+    Swal.fire({
+      title: "Do you want to delete todo?",
+      showDenyButton: false,
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      denyButtonText: ``,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        $.ajax({
+          type: "post",
+          url: "https://students.trungthanhweb.com/api/deletetodo",
+          data: {
+            apitoken: localStorage.getItem("token"),
+            id: id,
+          },
+          dataType: "JSON",
+          success: function (res) {
+            if (res.check == true) {
+              Swal.fire({
+                position: "top",
+                icon: "success",
+                title: "Deleted todo",
+                showConfirmButton: false,
+                timer: 1500,
+              }).then(() => {
+                window.location.reload();
+              });
+            } else if (res.check == false) {
+              if (res.msg.apitoken) {
+                Swal.fire({
+                  position: "top",
+                  icon: "error",
+                  title: "Invalid api! :/",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+              } else if (res.msg.id) {
+                Swal.fire({
+                  position: "top",
+                  icon: "error",
+                  title: "Invalid id! :/",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+              }
+            }
+          },
+        });
+      } else if (result.isDenied) {
+        Swal.fire("Changes are not saved", "", "info");
+      }
+    });
+  });
+}
+
+//--- editTodo ---//
+function editTodo() {
+  $(".editTodoBtn").click(function (e) {
+    e.preventDefault();
+    var key = $(this).attr("data-key");
+    var id = $(this).attr("data-id");
+    const todo = $(".todo");
+    var old = todo[key].innerText;
+    $("#editTodo").val(old); //truyen text-old vao input
+    $("#editModal").modal("show");
+    $("#submitEditBtn").click((e) => {
+      e.preventDefault();
+      var todo = $("#editTodo").val().trim();
+      if (todo == "") {
+        Swal.fire("Empty Todo! :/", "", "warning");
+      } else if (todo == old) {
+        Swal.fire("Do not change Todo! :/", "", "warning");
+      } else {
+        $.ajax({
+          type: "post",
+          url: "https://students.trungthanhweb.com/api/updatetodo",
+          data: {
+            apitoken: localStorage.getItem("token"),
+            todo: todo,
+            id: id,
+          },
+          dataType: "JSON",
+          success: function (res) {
+            if (res.check == true) {
+              Swal.fire({
+                position: "top",
+                icon: "success",
+                title: "Todo Updated ^^",
+                showConfirmButton: false,
+                timer: 1500,
+              }).then(() => {
+                window.location.reload();
+              });
+            } else if (res.msg.apitoken || res.msg.todo || res.msg.id) {
+              Swal.fire({
+                position: "top",
+                icon: "error",
+                title: "Update fail! :/",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
+          },
+        });
+      }
+    });
+  });
+}
+
+//--- searchTodo ---//
+function searchTodo() {
+  $("#searchInp").keyup(function (e) {
+    var text = $(this).val().trim();
+    if (text == "") {
+      loadTodoList();
+    } else {
+      $.ajax({
+        type: "post",
+        url: "https://students.trungthanhweb.com/api/searchtodo",
+        data: {
+          apitoken: localStorage.getItem("token"),
+          todo: text,
+        },
+        dataType: "JSON",
+        success: function (res) {
+          const todo = res.todo;
+          if (todo.length > 0) {
+            var html = ``;
+            todo.forEach((item, key) => {
+              if (item["status"] == 0) {
+                html +=
+                  `<tr>
+                  <th scope="row">` +
+                  ++key +
+                  `</th>
+                  <td>${item.note}</td>
+                  <td>
+                      <input class="form-check-input finish" type="checkbox" value="${item.status}" id="${item.id}">
+                  </td>
+                  <td>
+                      <div class="d-flex">
+                          <button type="button" class="btn-sm btn-danger p-0" id="">Del</button>
+                          <button type="button" class="btn-sm btn-warning ms-1 p-0" id="">Edit</button>
+                      </div>
+                  </td>
+                </tr>`;
+              }
+            });
+          }
+        },
+      });
+    }
+  });
 }
