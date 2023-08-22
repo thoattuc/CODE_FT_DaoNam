@@ -138,7 +138,11 @@ function createTodo() {
 //--- Show Todo ---//
 function showTodoList() {
   $("#tableTodo").hide();
+  $("#deleteManyBtn").hide();
+  $("#logoutBtn").hide();
   if (localStorage.getItem("token") && localStorage.getItem("token") !== "") {
+    $("#loginBtn").hide();
+    $("#logoutBtn").show();
     $.ajax({
       type: "GET",
       url: "https://students.trungthanhweb.com/api/todo",
@@ -153,32 +157,61 @@ function showTodoList() {
           var html = ``;
           var count = 1;
           todoList.forEach((item, key) => {
-            html +=
-              `<tr>
+            if (item.status == 0) {
+              html +=
+                `<tr>
                 <th scope="row">` +
-              count++ +
-              `</th>
+                count++ +
+                `</th>
                 <td><p class=todo>${item.note}</p></td>
                 <td>
                     <input class="form-check-input finish" type="checkbox" value="` +
-              item.status +
-              `" data-id="` +
-              item.id +
-              `">
+                item.status +
+                `" data-id="` +
+                item.id +
+                `">
                 </td>
                 <td>
                     <div class="d-flex">
                         <button type="button" class="btn-sm btn-danger p-0 deleteOneBtn" data-id="` +
-              item.id +
-              `">Del</button>
+                item.id +
+                `">Del</button>
                         <button type="button" class="btn-sm btn-warning ms-1 p-0 editTodoBtn" data-id="` +
-              item.id +
-              `" data-key="` +
-              key +
-              `">Edit</button>
+                item.id +
+                `" data-key="` +
+                key +
+                `">Edit</button>
                     </div>
                 </td>
               </tr>`;
+            } else {
+              html +=
+                `<tr>
+                <th scope="row">` +
+                count++ +
+                `</th>
+                <td><p class=todo>${item.note}</p></td>
+                <td>
+                    <input class="form-check-input finish" disabled checked type="checkbox" value="` +
+                item.status +
+                `" data-id="` +
+                item.id +
+                `">
+                </td>
+                <td>
+                    <div class="d-flex">
+                        <button type="button" class="btn-sm btn-danger p-0 deleteOneBtn" data-id="` +
+                item.id +
+                `">Del</button>
+                        <button type="button" class="btn-sm btn-warning ms-1 p-0 editTodoBtn" data-id="` +
+                item.id +
+                `" data-key="` +
+                key +
+                `">Edit</button>
+                    </div>
+                </td>
+              </tr>`;
+            }
           });
           $("#result").html(html);
           $("#tableTodo").show();
@@ -186,6 +219,7 @@ function showTodoList() {
         deleteTodo();
         editTodo();
         Logout();
+        finishTodo();
       },
     });
   }
@@ -199,16 +233,16 @@ function finishTodo() {
     Swal.fire({
       icon: "question",
       text: "Did you finish todo?",
-      showDenyButton: false,
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      denyButtonText: ``,
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: "Yes",
+      denyButtonText: `No`,
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         $.ajax({
           type: "post",
-          url: "https://students.trungthanhweb.com/api/updatetodo",
+          url: "https://students.trungthanhweb.com/api/statusTodo",
           data: {
             apitoken: localStorage.getItem("token"),
             id: id,
@@ -237,7 +271,7 @@ function finishTodo() {
           },
         });
       } else if (result.isDenied) {
-        Swal.fire("Changes are not saved", "", "info");
+        window.location.reload();
       }
     });
   });
