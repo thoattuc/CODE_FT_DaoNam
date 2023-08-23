@@ -126,9 +126,6 @@ function createTodo() {
           if (res.msg.apitoken) {
             Swal.fire("API token invalid! :/", "", "error");
           }
-          // else if (res.msg.todo) {
-          //   Swal.fire("Empty todo :/", "", "error");
-          // }
         },
       });
     }
@@ -218,8 +215,8 @@ function showTodoList() {
         }
         deleteTodo();
         editTodo();
-        Logout();
         finishTodo();
+        Logout();
       },
     });
   }
@@ -394,46 +391,89 @@ function editTodo() {
 
 //--- searchTodo ---//
 function searchTodo() {
-  $("#searchInp").keyup(function (e) {
-    var text = $(this).val().trim();
-    if (text == "") {
-      loadTodoList();
-    } else {
+  $("#searchInp").keyup(function (e) { 
+    var todoSearch = $(this).val().trim();
+    if(todoSearch != '') {
       $.ajax({
         type: "post",
         url: "https://students.trungthanhweb.com/api/searchtodo",
         data: {
-          apitoken: localStorage.getItem("token"),
-          todo: text,
+          apitoken: localStorage.getItem('token'),
+          todo: todoSearch,
         },
         dataType: "JSON",
         success: function (res) {
-          const todo = res.todo;
-          if (todo.length > 0) {
+          const todoResult = res.todo;
+          if (todoResult.length > 0) {
             var html = ``;
-            todo.forEach((item, key) => {
-              if (item["status"] == 0) {
+            var count = 1;
+            todoResult.forEach((item, key) => {
+              if (item.status == 0) {
                 html +=
                   `<tr>
                   <th scope="row">` +
-                  ++key +
+                  count++ +
                   `</th>
-                  <td>${item.note}</td>
+                  <td><p class=todo>${item.note}</p></td>
                   <td>
-                      <input class="form-check-input finish" type="checkbox" value="${item.status}" id="${item.id}">
+                      <input class="form-check-input finish" type="checkbox" value="` +
+                  item.status +
+                  `" data-id="` +
+                  item.id +
+                  `">
                   </td>
                   <td>
                       <div class="d-flex">
-                          <button type="button" class="btn-sm btn-danger p-0" id="">Del</button>
-                          <button type="button" class="btn-sm btn-warning ms-1 p-0" id="">Edit</button>
+                          <button type="button" class="btn-sm btn-danger p-0 deleteOneBtn" data-id="` +
+                  item.id +
+                  `">Del</button>
+                          <button type="button" class="btn-sm btn-warning ms-1 p-0 editTodoBtn" data-id="` +
+                  item.id +
+                  `" data-key="` +
+                  key +
+                  `">Edit</button>
+                      </div>
+                  </td>
+                </tr>`;
+              } else {
+                html +=
+                  `<tr>
+                  <th scope="row">` +
+                  count++ +
+                  `</th>
+                  <td><p class=todo>${item.note}</p></td>
+                  <td>
+                      <input class="form-check-input finish" disabled checked type="checkbox" value="` +
+                  item.status +
+                  `" data-id="` +
+                  item.id +
+                  `">
+                  </td>
+                  <td>
+                      <div class="d-flex">
+                          <button type="button" class="btn-sm btn-danger p-0 deleteOneBtn" data-id="` +
+                  item.id +
+                  `">Del</button>
+                          <button type="button" class="btn-sm btn-warning ms-1 p-0 editTodoBtn" data-id="` +
+                  item.id +
+                  `" data-key="` +
+                  key +
+                  `">Edit</button>
                       </div>
                   </td>
                 </tr>`;
               }
             });
+            $("#result").html(html);
           }
+          deleteTodo();
+          editTodo();
+          finishTodo();
+          Logout();
         },
       });
+    } else {
+      showTodoList();
     }
   });
 }
