@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+
+    <link rel="shortcut icon" href="#">
     <link rel="stylesheet" href="./css/bootstrap5.1.css" />
     <link rel="stylesheet" href="./css/sweetalert2.css" />
     <link rel="stylesheet" href="./css/style_0.css" />
+
     <script src="./js/bootstrap5.1.js"></script>
     <script src="./js/jquery3.7.js"></script>
     <script src="./js/sweetalert2.js"></script>
@@ -242,14 +245,20 @@
     <!--products-->
     <div class="container">
       <div class="m-3">
-        <h2 class="text-center">IPhone</h2>
+        <h2 class="text-center" id="groupPrd"></h2>
         <hr/>
 
         <div class="row" id="resultPrd">
+            
         </div>
 
         <div class="row w-10 mt-3 mr-auto">
-          <button class="btn btn-outline-success w-25 d-flex" id="showmoreBtn">Show more >></button>
+          <div class="col-md">
+            <button class="btn btn-outline-success w-25 d-flex" id="showmoreBtn">Show more >></button>
+          </div>
+
+          <div class="col-md" id="pageNumber">
+          </div>
         </div>
     </div>
   </body>
