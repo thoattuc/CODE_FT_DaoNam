@@ -185,9 +185,41 @@ function showmore() {
         $("#resultPrd").append(productCard);
       }
       console.log(link);
-      if(link==null) {
+      if (link == null) {
         $("#showmoreBtn").hide();
       }
+      addToCart();
     },
+  });
+}
+
+function addToCart() {
+  if(localStorage.getItem("cart")||localStorage.getItem("cart")==null) {
+    var arrCart = []
+  } else {
+    var cart = localStorage.getItem("cart");
+    arrCart = JSON.parse(cart);
+  }
+  $(".addToCartBtn").click(function (e) { 
+    e.preventDefault();
+    var id = $(this).attr("data-id");
+    // console.log(id);
+    var quantity = 1;
+    var productItem = [id, quantity];
+    var check = 0;
+    arrCart.forEach(item => {
+      if(item[0]==id){
+        item[1]++;
+        check=1;
+      }       
+    });
+    if (check == 0) {
+      arrCart.push(productItem);
+    }
+    localStorage.setItem("cart",JSON.stringify(arrCart));
+    Toast.fire({
+      icon: 'success',
+      title: 'Add To success ^^'
+    });
   });
 }
