@@ -1,11 +1,9 @@
-//--- Script: jquery + alert + CRUD Todolist ---//
 $(document).ready(function () {
-  login();
-  loadData();
-  showmore();
-});
+    login();
+    loadData();
+  });
 
-//--- Global const ---//
+  //--- Global const ---//
 
 const url = "https://students.trungthanhweb.com/api/";
 
@@ -85,24 +83,27 @@ function Logout() {
 }
 
 //--- Load Data ---//
-var link = url + "home";
-var page = "";
 function loadData() {
   $("#logoutBtn").hide();
   if (localStorage.getItem("token") && localStorage.getItem("token") != null) {
     $("#loginBtn").hide();
     $("#logoutBtn").show();
-    $("#showmoreBtn").click(function (e) {
-      e.preventDefault();
-      showmore();
-    });
+    const params = new URLSearchParams(window.location.search);
+    if(!params.has('id')){
+      window.location.replace('index.html');
+    }       
+    var id=params.get('id');  
+    console.log(id);
+     
+    showMenu();
   }
 }
 
-function showmore() {
+//---Menu---//
+function showMenu() {
   $.ajax({
     type: "GET",
-    url: link,
+    url: url + "home",
     data: {
       apitoken: localStorage.getItem("token"),
     },
@@ -110,8 +111,6 @@ function showmore() {
     success: function (res) {
       var brands = res.brands;
       var categrories = res.categrories;
-      const products = res.products.data;
-      link = res.products.next_page_url;
 
       if (brands.length) {
         var brandsLi = ``;
@@ -139,87 +138,19 @@ function showmore() {
         $("#categroriesUl").html(categroriesLi);
       }
       Logout();
-
-      if (products.length) {
-        var productCard = ``;
-        products.forEach((item) => {
-          productCard +=
-            `
-          <div class="col-md-3 mb-3">
-          <div class="card" style="width: 100%;" id="" style="width: 18rem;">
-          <a href="/chitiet.html?id=` +
-            item["id"] +
-            `">
-          <img src="https://students.trungthanhweb.com/images/` +
-            item["images"] +
-            `" class="card-img-top productImage" alt="">
-          </a>
-          <div class="card-body">
-              <h5 class="card-title">` +
-            item["name"] +
-            `</h5>
-              <p class="card-text">Giá :` +
-            Intl.NumberFormat("en-US").format(item["price"]) +
-            `</p>
-              <p class="card-text">Loại sản phẩm :` +
-            item["catename"] +
-            `</p>
-              <p class="card-text">Thương hiệu : ` +
-            item["brandname"] +
-            `</p>
-              <p class="card-text"></p>
-              <a href="detail.html?id=` +
-            item["id"] +
-            `" class="btn btn-primary" data-id=` +
-            item["id"] +
-            `>Detail</a>
-              <a href="#" class="btn btn-success addToCartBtn" data-id="` +
-            item["id"] +
-            `">Add Cart</a>
-          </div>
-      </div>
-      </div>
-          `;
-        });
-        $("#groupPrd").text("All Product");
-        $("#resultPrd").append(productCard);
-      }
-      console.log(link);
-      if (link == null) {
-        $("#showmoreBtn").hide();
-      }
-      addToCart();
     },
   });
 }
 
-function addToCart() {
-  if(localStorage.getItem("cart")||localStorage.getItem("cart")==null) {
-    var arrCart = []
-  } else {
-    var cart = localStorage.getItem("cart");
-    arrCart = JSON.parse(cart);
-  }
-  $(".addToCartBtn").click(function (e) { 
-    e.preventDefault();
-    var id = $(this).attr("data-id");
-    // console.log(id);
-    var quantity = 1;
-    var productItem = [id, quantity];
-    var check = 0;
-    arrCart.forEach(item => {
-      if(item[0]==id){
-        item[1]++;
-        check=1;
-      }       
-    });
-    if (check == 0) {
-      arrCart.push(productItem);
+//--- Show detail ---//
+function showDetail () {
+  $.ajax({
+    type: "GET",
+    url: url + "single",
+    data: "data",
+    dataType: "dataType",
+    success: function (response) {
+      
     }
-    localStorage.setItem("cart",JSON.stringify(arrCart));
-    Toast.fire({
-      icon: 'success',
-      title: 'Add To success ^^'
-    });
   });
 }

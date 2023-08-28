@@ -6,7 +6,6 @@ $(document).ready(function () {
 });
 
 //--- Global const ---//
-
 const url = "https://students.trungthanhweb.com/api/";
 
 const Toast = Swal.mixin({
@@ -84,7 +83,7 @@ function Logout() {
   });
 }
 
-//--- Menu ---//
+//--- Load Data ---//
 function loadData() {
   $("#logoutBtn").hide();
   if (localStorage.getItem("token") && localStorage.getItem("token") != null) {
@@ -95,6 +94,7 @@ function loadData() {
   }
 }
 
+//---Menu---//
 function showMenu() {
   $.ajax({
     type: "GET",
@@ -137,6 +137,7 @@ function showMenu() {
   });
 }
 
+//--- Show Cart ---//
 function showCart() {
   if (localStorage.getItem("cart") && localStorage.getItem("cart") != null) {
     var cart = localStorage.getItem("cart");
