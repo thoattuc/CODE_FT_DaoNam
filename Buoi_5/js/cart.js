@@ -155,6 +155,7 @@ function showCart() {
       console.log(res.result);
       if (res.result.length > 0) {
         var cartTable = ``;
+        var sum = 0;
         res.result.forEach((item, index) => {
           cartTable +=
             `<tr class = "">
@@ -171,17 +172,28 @@ function showCart() {
             item[1] +
             `</td>
           <td>` +
-            item[2] +
+            Intl.NumberFormat("en-US").format(item[5]) +
             `</td>
           <td>` +
             item[4] +
             `</td>
           <td>` +
-            item[5] +
+            Intl.NumberFormat("en-US").format(item[6]) +
             `</td>
           <td></td>
         </tr>`;
+          sum += item[6];
         });
+        cartTable +=
+          `
+        <tr class="">
+          <td colspan="5" scope="row"><b>Total:</b></td>
+          <td scope="row">` +
+          Intl.NumberFormat("en-US").format(sum) +
+          `</td>
+          <td></td>
+        </tr>
+        `;
         $("#cartResult").html(cartTable);
       }
     },
