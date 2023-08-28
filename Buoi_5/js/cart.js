@@ -103,6 +103,4 @@ function showCart() {
             
         }
     });
-}
-
-  
+}  
