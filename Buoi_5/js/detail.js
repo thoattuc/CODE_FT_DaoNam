@@ -1,11 +1,15 @@
 $(document).ready(function () {
-    login();
-    loadData();
-  });
+  login();
+  loadData();
+});
 
-  //--- Global const ---//
+//--- Global const ---//
 
 const url = "https://students.trungthanhweb.com/api/";
+const params = new URLSearchParams(window.location.search);
+var id = params.get("id");
+var imageURL = "https://students.trungthanhweb.com/images/"
+console.log(id)
 
 const Toast = Swal.mixin({
   toast: true,
@@ -88,14 +92,13 @@ function loadData() {
   if (localStorage.getItem("token") && localStorage.getItem("token") != null) {
     $("#loginBtn").hide();
     $("#logoutBtn").show();
-    const params = new URLSearchParams(window.location.search);
-    if(!params.has('id')){
-      window.location.replace('index.html');
-    }       
-    var id=params.get('id');  
-    console.log(id);
-     
+
+    if (!params.has("id")) {
+      window.location.replace("index.html");
+    }
     showMenu();
+    showDetail();
+    owl();
   }
 }
 
@@ -143,14 +146,51 @@ function showMenu() {
 }
 
 //--- Show detail ---//
-function showDetail () {
-  $.ajax({
-    type: "GET",
-    url: url + "single",
-    data: "data",
-    dataType: "dataType",
-    success: function (response) {
-      
-    }
+function showDetail() {
+$.ajax({
+  type: "get",
+  url: url + "single",
+  data: {
+    apitoken: localStorage.getItem("token"),
+    id: id,
+  },
+  dataType: "json",
+  success: function (res) {
+    const gallery = res.gallery;
+    console.log(gallery);
+    var galleryImg = ``;
+    gallery.forEach(item => {
+      galleryImg=`
+      `
+    });
+    
+    const products=res.products[0];
+    var image=imageURL + products.images;
+    $("#productImage").attr("src", image);
+
+    const name = products.name;
+    const price = Intl.NumberFormat("en-US").format(products.price*((100-products.discount)/100));
+    const discount = products.discount + `%`;
+    const brand = products.brandname;
+    const category = products.catename;
+    $("#productName").text(name);
+    $("#discount").text(discount);
+    $("#price").text(price);
+    $("#categoryName").text(category);
+    $("#brandName").text(brand);
+
+    const content = products.content;
+    $("#content").html(content);
+  }
+});
+}
+
+//--- Slide Image ---//
+function owl() {
+  $(".owl-carousel").owlCarousel({
+    loop: true,
+    margin: 10,
+    nav: false,
+    responsiveClass: true,
   });
 }
