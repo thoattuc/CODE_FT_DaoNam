@@ -231,10 +231,6 @@ function checkout() {
     $("#checkoutModal").modal("show");
     $("#submitCheckoutBtn").click(function (e) {
       e.preventDefault();
-      var name = $("#nameInp").val().trim();
-      var phone = $("#phoneInp").val().trim();
-      var address = $("#addressInp").val().trim();
-      
     });
   });
 }
