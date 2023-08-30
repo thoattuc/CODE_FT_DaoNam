@@ -234,6 +234,7 @@ function checkout() {
       var name = $("#nameInp").val().trim();
       var phone = $("#phoneInp").val().trim();
       var address = $("#addressInp").val().trim();
+      
     });
   });
 }
