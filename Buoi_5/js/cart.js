@@ -1,4 +1,3 @@
-//--- Script: jquery + alert + CRUD Todolist ---//
 $(document).ready(function () {
   login();
   Logout();
@@ -175,9 +174,11 @@ function showCart() {
           <td>` +
             Intl.NumberFormat("en-US").format(item[5]) +
             `</td>
-          <td>` +
+          <td><input type="number" class="form-control w-50 quantityInp" value="` +
             item[4] +
-            `</td>
+            `" data-id="` +
+            item[0].id +
+            `" ></td>
           <td>` +
             Intl.NumberFormat("en-US").format(item[6]) +
             `</td>
@@ -197,6 +198,42 @@ function showCart() {
         `;
         $("#cartResult").html(cartTable);
       }
+      checkout();
     },
+  });
+}
+
+//--- Edit Cart ---//
+function editQuantity() {
+  $(".quantityInp").change(function (e) {
+    e.preventDefault();
+  });
+  (function (e) {
+    e.preventDefault();
+    var id = $(this).attr("data-id");
+    var newQuantity = $(this).val();
+    console.log(id, newQuantity);
+    var arrCart = JSON.parse(localStorage.getItem("cart"));
+    arrCart.forEach((item) => {
+      if (item[0] == id) {
+        item[4] == newQuantity;
+      }
+    });
+    localStorage.setItem("cart", JSON.stringify(arrCart));
+    showCart();
+  });
+}
+
+//--- Checkout ---//
+function checkout() {
+  $("#checkoutBtn").click(function (e) {
+    e.preventDefault();
+    $("#checkoutModal").modal("show");
+    $("#submitCheckoutBtn").click(function (e) {
+      e.preventDefault();
+      var name = $("#nameInp").val().trim();
+      var phone = $("#phoneInp").val().trim();
+      var address = $("#addressInp").val().trim();
+    });
   });
 }

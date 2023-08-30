@@ -4,12 +4,15 @@ $(document).ready(function () {
 });
 
 //--- Global const ---//
-
 const url = "https://students.trungthanhweb.com/api/";
+
 const params = new URLSearchParams(window.location.search);
+
 var id = params.get("id");
-var imageURL = "https://students.trungthanhweb.com/images/"
-console.log(id)
+
+console.log("id:", typeof id);
+
+var imageURL = "https://students.trungthanhweb.com/images/";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -99,6 +102,7 @@ function loadData() {
     showMenu();
     showDetail();
     owl();
+
   }
 }
 
@@ -147,42 +151,84 @@ function showMenu() {
 
 //--- Show detail ---//
 function showDetail() {
-$.ajax({
-  type: "get",
-  url: url + "single",
-  data: {
-    apitoken: localStorage.getItem("token"),
-    id: id,
-  },
-  dataType: "json",
-  success: function (res) {
-    const gallery = res.gallery;
-    console.log(gallery);
-    var galleryImg = ``;
-    gallery.forEach(item => {
-      galleryImg=`
-      `
-    });
-    
-    const products=res.products[0];
-    var image=imageURL + products.images;
-    $("#productImage").attr("src", image);
+  $.ajax({
+    type: "get",
+    url: url + "single",
+    data: {
+      apitoken: localStorage.getItem("token"),
+      id: id,
+    },
+    dataType: "json",
+    success: function (res) {
+      const products = res.products[0];
+      var image = imageURL + products.images;
+      $("#productImage").attr("src", image);
 
-    const name = products.name;
-    const price = Intl.NumberFormat("en-US").format(products.price*((100-products.discount)/100));
-    const discount = products.discount + `%`;
-    const brand = products.brandname;
-    const category = products.catename;
-    $("#productName").text(name);
-    $("#discount").text(discount);
-    $("#price").text(price);
-    $("#categoryName").text(category);
-    $("#brandName").text(brand);
+      const name = products.name;
+      const price = Intl.NumberFormat("en-US").format(
+        products.price * ((100 - products.discount) / 100)
+      );
+      const discount = products.discount + `%`;
+      const brand = products.brandname;
+      const category = products.catename;
+      $("#productName").text(name);
+      $("#discount").text(discount);
+      $("#price").text(price);
+      $("#categoryName").text(category);
+      $("#brandName").text(brand);
 
-    const content = products.content;
-    $("#content").html(content);
-  }
-});
+      var prd = [
+        id,
+        products.name,
+        products.discount + `%`,
+        products.price * ((100 - products.discount) / 100),
+      ];
+      console.log("prd",prd);
+
+      //--- Add to like ---//
+      $("#addToLikeBtn").click(function (e) {
+      });
+
+      addToCart();
+
+      //-----------slide_gallery:
+      // const gallery = res.gallery;
+      // console.log(gallery);
+      // var galleryImg = ``;
+      // gallery.forEach(item => {
+      //   galleryImg =
+      //     `<div class="item">
+      //       <img class="pointer" src="` +
+      //       item +
+      //       `" alt="" id="">
+      //       </img>
+      //     </div>
+      //     `;
+      //     $("#carousel").append(galleryImg);
+      // });
+
+      const content = products.content;
+      $("#content").html(content);
+
+      //------------same_producct:
+      // const cateProducts = res.cateproducts;
+      // console.log(cateProducts);
+      // var samePrdHtml = ``
+      // cateProducts.forEach(item => {
+      //   samePrdHtml = `
+      //   <div class="card col-md-6 item">
+      //   <img src="`+(imageURL + item.image)+`" class="card-img-top" alt="">
+      //   <div class="card-body">
+      //     <h5 class="card-title">`+item.name+`</h5>
+      //     <p class="card-text">`+item.price+`</p>
+      //     <a href="#" class="btn btn-primary">Detail</a>
+      //   </div>
+      // </div>
+      //   `;
+      //   $("#sameProduct").append(samePrdHtml);
+      // });
+    },
+  });
 }
 
 //--- Slide Image ---//
@@ -192,5 +238,50 @@ function owl() {
     margin: 10,
     nav: false,
     responsiveClass: true,
+    responsive: {
+      0: {
+        items: 1,
+        nav: false,
+      },
+      600: {
+        items: 3,
+        nav: false,
+      },
+      1000: {
+        items: 5,
+        nav: true,
+        loop: false,
+      },
+    },
+  });
+}
+
+//--- Add to cart ---//
+function addToCart() {
+  $("#addToCartBtn").click(function (e) {
+    e.preventDefault();
+    if (localStorage.getItem("cart") && localStorage.getItem("cart") != null) {
+      var cart = localStorage.getItem("cart");
+      var arrCart = JSON.parse(cart);
+      
+    } else {
+      var arrCart =[];
+    }
+    var check = false;
+      arrCart.forEach((item) => {
+        if (item[0] == id) {
+          item[1]++;
+          check = true;
+        }
+      });
+      if (check == false) {
+        var item = [id, 1];
+        arrCart.push(item);
+      }
+      localStorage.setItem("cart", JSON.stringify(arrCart));
+      Toast.fire({
+        icon: "success",
+        title: "Add to success ^^",
+      });
   });
 }
