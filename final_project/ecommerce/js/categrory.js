@@ -56,7 +56,7 @@ function loadData() {
   }
 }
 
-function getProducts(url) {
+function getProducts() {
   const params = new URLSearchParams(window.location.search);
   if (!params.has("id")) {
     window.location.replace("index.html");
@@ -194,7 +194,7 @@ function getProducts(url) {
 }
 
 function addToCart() {
-  if (localStorage.getItem("cart") || localStorage.getItem("cart") == null) {
+  if (!localStorage.getItem("cart") || localStorage.getItem("cart") == null) {
     var arrCart = [];
   } else {
     var cart = localStorage.getItem("cart");

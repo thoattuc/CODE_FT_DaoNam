@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+    <title>Brand</title>
 
     <link rel="shortcut icon" href="#" />
     <link rel="stylesheet" href="./css/bootstrap5.1.css" />
@@ -13,54 +13,8 @@
     <script src="./js/bootstrap5.1.js"></script>
     <script src="./js/jquery3.7.js"></script>
     <script src="./js/sweetalert2.js"></script>
-    <script src="./js/script_0.js"></script>
   </head>
-
   <body>
-    <!--Modal Login-->
-    <div
-      class="modal fade"
-      id="loginModal"
-      tabindex="-1"
-      aria-labelledby="loginModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="loginModalLabel">Login:</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body row">
-            <input
-              class="col-md m-3"
-              type="email"
-              id="email"
-              name="email"
-              placeholder="input email!"
-            />
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button type="button" class="btn btn-primary" id="submitLoginBtn">
-              Login
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!--Navbar-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
@@ -174,12 +128,11 @@
           <form class="d-flex">
             <input
               class="form-control me-2"
-              id="searchProduct"
               type="search"
               placeholder="Search"
               aria-label="Search"
             />
-            <button class="btn btn-outline-success" id="searchBtn" type="submit">
+            <button class="btn btn-outline-success" type="submit">
               Search
             </button>
           </form>
@@ -271,27 +224,51 @@
       </div>
     </div>
 
-    <!--products-->
+    <!--Products-->
     <div class="container">
-      <div class="m-3">
-        <h2 class="text-center" id="groupPrd"></h2>
+      <div class="row w-100">
+        <h2 class="text-center text-danger" id="groupPrd"></h2>
         <hr />
-
-        <div class="row" id="resultPrd"></div>
-
-        <div class="row w-10 mt-3 mr-auto">
-          <div class="col-md">
-            <button
-              class="btn btn-outline-success w-25 d-flex"
-              id="showmoreBtn"
-            >
-              Show more..
-            </button>
+        <div class="col-md-2">
+          <div class="row w-100">
+            <div class="mt-1">
+              <input
+                type="number"
+                id="lowPrice"
+                placeholder="from"
+                class="form-control"
+              />
+            </div>
+            <div class="mt-1">
+              <input
+                type="number"
+                id="maxPrice"
+                class="form-control"
+                placeholder="to"
+              />
+            </div>
+            <div class="mt-3">
+              <button class="btn btn-outline-success w-100" id="searchPriceBtn">
+                Search
+              </button>
+            </div>
           </div>
-
-          <div class="col-md" id="pageNumber"></div>
+        </div>
+        <div class="col-md-10">
+          <div class="row w-100" id="resultProducts"></div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-10">
+          <div class="row"></div>
+        </div>
+        <div class="col-md-2">
+          <nav aria-label="Page navigation example mt-3">
+            <ul class="pagination ms-5 ps-4" id="pagination"></ul>
+          </nav>
         </div>
       </div>
     </div>
+    <script src="js/brands.js"></script>
   </body>
 </html>

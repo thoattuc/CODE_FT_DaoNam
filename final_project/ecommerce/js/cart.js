@@ -202,10 +202,10 @@ function showCart() {
         `;
         $("#cartResult").html(cartTable);
       } else {
-        Toast.fire({
+        window.location.replace("index_0.html").then(Toast.fire({
           icon: "warning",
           title: "Empty Cart!",
-        }).then(window.location.replace("index_0.html?err=emtycart"));
+        }));
       }
       editQuantity();
       deleteCart();
