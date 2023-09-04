@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cart</title>
+    <title>Bill</title>
+
     <link rel="shortcut icon" href="#" />
     <link rel="stylesheet" href="./css/bootstrap5.1.css" />
     <link rel="stylesheet" href="./css/sweetalert2.css" />
@@ -14,68 +15,6 @@
     <script src="./js/sweetalert2.js"></script>
   </head>
   <body>
-    <!--Modal Checkout-->
-    <div
-      class="modal fade"
-      id="checkoutModal"
-      tabindex="-1"
-      aria-labelledby="checkoutModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="checkoutModalLabel">Checkout:</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body row">
-            <input
-              class="mr-auto mt-2"
-              type="text"
-              id="nameInp"
-              name="name"
-              placeholder="Full name:"
-            />
-            <input
-              class="mr-auto mt-2"
-              type="text"
-              id="phoneInp"
-              name="phone"
-              placeholder="phoneNumber:"
-            />
-            <input
-              class="mr-auto mt-2"
-              type="text"
-              id="addressInp"
-              name="address"
-              placeholder="Address:"
-            />
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              id="submitCheckoutBtn"
-            >
-              Checkout
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!--Modal Login-->
     <div
       class="modal fade"
@@ -178,7 +117,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" id="deal" href="">Bill</a>
+              <a class="nav-link" id="bill" href="bill.html">Bill</a>
             </li>
 
             <li class="nav-item">
@@ -198,7 +137,7 @@
                   viewBox="0 0 512 512"
                 >
                   <style>
-                    svg.like {
+                    svg {
                       fill: darkgreen;
                     }
                   </style>
@@ -211,7 +150,7 @@
           </ul>
 
           <div class="icon-cart navbar-nav me-2 mb-2 mb-lg-0">
-            <a class="cart" href="#">
+            <a class="cart" href="cart.html">
               <svg
                 class="cart"
                 xmlns="http://www.w3.org/2000/svg"
@@ -245,34 +184,36 @@
       </div>
     </nav>
 
-    <!--Cart-->
-    <div class="container mt-4">
-      <div class="table-responsive">
-        <table class="table table-hover table-secondary">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Picture</th>
-              <th scope="col">Name</th>
-              <th scope="col">Price</th>
-              <th scope="col">Quantity</th>
-              <th scope="col">Payment</th>
-              <th scope="col">Handle</th>
-            </tr>
-          </thead>
-          <tbody id="cartResult"></tbody>
-        </table>
-      </div>
-
+    <!--Bill-->
+    <div class="container mt-3">
       <div class="row">
-        <div class="col-md-2">
-          <button class="btn btn btn-primary w-100" id="checkoutBtn">
-            Checkout
-          </button>
+        <div class="col-md-4">
+          <ul class="list-group hideclass" id="resultBill">
+            <li class="list-group-item active" aria-current="true">
+              An active item
+            </li>
+          </ul>
+        </div>
+        <div class="col-md">
+          <div class="table-responsive hideclass" id="billDetailTable">
+            <table class="table table-primary">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Image</th>
+                  <th scope="col">Product</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody id="resultBillDetail"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-
-    <script src="./js/cart.js"></script>
+    
+    <script src="js/bill.js"></script>
   </body>
 </html>

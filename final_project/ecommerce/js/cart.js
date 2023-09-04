@@ -153,7 +153,7 @@ function showCart() {
     dataType: "JSON",
     success: function (res) {
       console.log(res.result);
-      if (res.result.length > 0) {
+      if (res.result != undefined && res.result.length > 0) {
         var cartTable = ``;
         var sum = 0;
         res.result.forEach((item, index) => {
@@ -174,15 +174,19 @@ function showCart() {
           <td>` +
             Intl.NumberFormat("en-US").format(item[5]) +
             `</td>
-          <td><input type="number" class="form-control w-50 quantityInp" value="` +
+          <td><input type="number" class="form-control  w-50 quantityInp" value="` +
             item[4] +
             `" data-id="` +
-            item[0].id +
+            item[0] +
             `" ></td>
           <td>` +
             Intl.NumberFormat("en-US").format(item[6]) +
             `</td>
-          <td></td>
+          <td>
+          <button class="btn-sm btn-danger deleteCartItem" data-id="` +
+            Number(item[0]) +
+            `">Del</button>
+          </td>
         </tr>`;
           sum += item[6];
         });
@@ -197,7 +201,14 @@ function showCart() {
         </tr>
         `;
         $("#cartResult").html(cartTable);
+      } else {
+        Toast.fire({
+          icon: "warning",
+          title: "Empty Cart!",
+        }).then(window.location.replace("index_0.html?err=emtycart"));
       }
+      editQuantity();
+      deleteCart();
       checkout();
     },
   });
@@ -207,20 +218,90 @@ function showCart() {
 function editQuantity() {
   $(".quantityInp").change(function (e) {
     e.preventDefault();
-  });
-  (function (e) {
-    e.preventDefault();
     var id = $(this).attr("data-id");
     var newQuantity = $(this).val();
     console.log(id, newQuantity);
-    var arrCart = JSON.parse(localStorage.getItem("cart"));
-    arrCart.forEach((item) => {
-      if (item[0] == id) {
-        item[4] == newQuantity;
+    var cart = JSON.parse(localStorage.getItem("cart"));
+    if (newQuantity == 0) {
+      Swal.fire({
+        icon: "warning",
+        text: "Remove product?",
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: "Yes",
+        denyButtonText: `No`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          var arr = [];
+          cart.forEach((item) => {
+            if (item[0] != id) {
+              arr.push(item);
+            }
+          });
+          if (arr.length == 0) {
+            localStorage.removeItem("cart");
+          } else {
+            localStorage.setItem("cart", JSON.stringify(arr));
+          }
+          Toast.fire({
+            icon: "success",
+            title: "Removed !",
+          }).then(() => {
+            showCart();
+          });
+        } else if (result.isDenied) {
+          showCart();
+        }
+      });
+    } else {
+      cart.forEach((item) => {
+        if (item[0] == id) {
+          item[1] = newQuantity;
+        }
+      });
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+    showCart();
+  });
+}
+
+//--- Delete cart ---//
+function deleteCart() {
+  $(".deleteCartItem").click(function (e) {
+    e.preventDefault();
+    Swal.fire({
+      icon: "question",
+      text: "Delete item?",
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: "Delete",
+      denyButtonText: `No`,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        var id = $(this).attr("data-id");
+        var arr = [];
+        console.log(id);
+        var cart = JSON.parse(localStorage.getItem("cart"));
+        cart.forEach((item) => {
+          if (item[0] != id) {
+            arr.push(item);
+          }
+        });
+        if (arr.length == 0) {
+          localStorage.removeItem("cart");
+        } else {
+          localStorage.setItem("cart", JSON.stringify(arr));
+        }
+        Toast.fire({
+          icon: "success",
+          title: "Removed",
+        }).then(() => {
+          showCart();
+        });
+      } else if (result.isDenied) {
       }
     });
-    localStorage.setItem("cart", JSON.stringify(arrCart));
-    showCart();
   });
 }
 
@@ -229,12 +310,64 @@ function checkout() {
   $("#checkoutBtn").click(function (e) {
     e.preventDefault();
     $("#checkoutModal").modal("show");
+    const format = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
     $("#submitCheckoutBtn").click(function (e) {
       e.preventDefault();
       var name = $("#nameInp").val().trim();
       var phone = $("#phoneInp").val().trim();
       var address = $("#addressInp").val().trim();
-      
+
+      console.log(name, phone, address);
+
+      if(name == '') {
+        Toast.fire({
+          icon: "warning",
+          title: "Empty name!",
+        });
+      } else if(phone == '') {
+        Toast.fire({
+          icon: "warning",
+          title: "Empty phone!",
+        });
+      } else if (address == '') {
+        Toast.fire({
+          icon: "warning",
+          title: "Empty address!",
+        });
+      } else if (!phone.match(format)) {
+        Toast.fire({
+          icon: "warning",
+          title: "Invalid phone!",
+        });
+      } else {
+        $("#submitCheckoutBtn").attr("disabled", "disabled");
+        var cart = JSON.parse(localStorage.getItem("cart"));
+        console.log(cart);
+        $.ajax({
+          type: "POST",
+          url: url + "createBill",
+          data: {
+            tenKH: name,
+            phone: phone,
+            address: address,
+            cart: cart,
+            api_token: localStorage.getItem("token"),
+          },
+          dataType: "JSON",
+          success: function (res) {
+            if (res.check == true){
+              console.log(res.check);
+              Toast.fire({
+                icon: "success",
+                title: "Order success ^^",
+              }).then(() => {
+                localStorage.removeItem("cart");
+                window.location.replace("index_0.html");
+              });
+            }
+          }
+        });
+      }
     });
   });
 }
